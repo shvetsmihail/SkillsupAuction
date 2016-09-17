@@ -6,15 +6,18 @@ import com.su.domain.Item;
 import com.su.domain.Lot;
 import com.su.domain.User;
 import com.su.service.AuctionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-
-
+@Component
 public class AuctionServiceImp implements AuctionService {
+    @Autowired
     private UserDao userDao;
+    @Autowired
     private LotDao lotDao;
 
     @Override
