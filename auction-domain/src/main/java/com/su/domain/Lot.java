@@ -77,8 +77,8 @@ public class Lot {
 
     @Override
     public String toString() {
-        return  "item=" + item +
-                ", owner=" + owner +
-                ", startPrice=" + startPrice;
+        return  "item: " + item +
+                ", owner: " + owner +
+                ", startPrice: " + startPrice;
     }
 }

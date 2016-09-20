@@ -4,6 +4,7 @@ import com.su.domain.Lot;
 import com.su.domain.User;
 import com.su.service.AuctionService;
 import com.su.service.ItemService;
+import com.su.service.LotHistoryService;
 import com.su.service.UserService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -23,71 +24,67 @@ public class Main {
         AuctionService auctionService = context.getBean(AuctionService.class);
         ItemService itemService = context.getBean(ItemService.class);
         UserService userService = context.getBean(UserService.class);
+        LotHistoryService lotHistoryService = context.getBean(LotHistoryService.class);
 
-
-
-
-
-//        1. Создать несколько User’ов
-//        2. Создать несколько Item’ов
-//        3. Один пользователей создает лот
-//        4. Несколько других пользователей делают ставки
-//        5. Закрываем лот
-//        6. Выводим в консоль имя победителя торгов
-
-        //Create lots
         auctionService.createLot(
-                itemService.createItem("Ford Fiesta", "Type: car, Year: 2012, Color: blue"),
+                itemService.createItem("Ford Fiesta", "car, 2012, blue"),
                 userService.createUser("semmi", "Sem", "Stinson"),
                 new BigDecimal(25000));
 
         auctionService.createLot(
-                itemService.createItem("Opel Astra", "Type: car, Year: 2008, Color: white"),
+                itemService.createItem("Opel Astra", "car, 2008, white"),
                 userService.createUser("jakl", "Jack", "Long"),
-                new BigDecimal(25000));
+                new BigDecimal(13000));
 
-        System.out.println("Today ve have next lots:");
-        int i = 1;
         for (Lot lot : auctionService.getActiveLots()){
-            System.out.println("lot number " + i++);
             System.out.println(lot);
             System.out.println("Members:");
             List<User> members =  userService.getAll().stream().filter(user -> user != lot.getOwner()).collect(Collectors.toList());
 
             for (User member : members){
-                System.out.println("id=" + members.indexOf(member)+ " , " + member);
+                System.out.println("id=" + members.indexOf(member)+ ", " + member);
             }
 
-            System.out.println("You have next action:");
+            System.out.println("You have next actions:");
             System.out.println("to do a raise you must say: 'UserId' 'New prise(optional)'");
             System.out.println("to close lot, print 'close'");
-            String action = null;
+
+            String action;
             while (true){
-                action=reader.readLine();
+                action = reader.readLine();
                 if (action.equals("close")) break;
                 String[] actions = action.split(" ");
-                User member = members.get(Integer.parseInt(actions[0]));
 
-                if (actions.length == 1){
+                int userId;
+                BigDecimal newPrice = null;
+
+                try{
+                    userId = Integer.parseInt(actions[0]);
+                    if (actions.length == 2){
+                        newPrice = BigDecimal.valueOf(Double.parseDouble(actions[1])).setScale(0, BigDecimal.ROUND_UP);
+                    }
+                    if (userId > (members.size()-1) || userId < 0) throw new Exception();
+                } catch (Exception e){
+                    System.out.println("Wrong information. Try again");
+                    continue;
+                }
+
+                User member = members.get(userId);
+                if (newPrice == null){
                     auctionService.placeBid(lot, member);
-                    System.out.println(member + "do a raise. Current prise is " + lot.getCurrentPrice());
-
-                }
-                else {
-                    BigDecimal newPrice = BigDecimal.valueOf(Integer.parseInt(actions[1]));
+                    lotHistoryService.createLotHistory(lot, member, lot.getCurrentPrice());
+                } else {
                     auctionService.placeBid(lot, member, newPrice);
-                    System.out.println(member + "do a raise. Current prise is " + lot.getCurrentPrice());
+                    lotHistoryService.createLotHistory(lot, member, newPrice);
                 }
+
+                System.out.println(member + " did a raise. Current price is " + lot.getCurrentPrice() + ". Current owner is: " + lot.getBuyer());
             }
-            System.out.println("The winner is " + lot.getBuyer() + "Current prise is " + lot.getCurrentPrice());
+            System.out.println("The winner is " + lot.getBuyer() + ". Current price is " + lot.getCurrentPrice());
+            System.out.println("-------------------------------");
         }
 
-
-
-
-
-
-
+        lotHistoryService.getAll().forEach(System.out::println);
     }
 
 }

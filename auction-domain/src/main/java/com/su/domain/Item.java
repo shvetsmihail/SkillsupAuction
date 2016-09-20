@@ -28,6 +28,6 @@ public class Item {
 
     @Override
     public String toString() {
-        return title + " " + description;
+        return title + " (" + description+ ")";
     }
 }
