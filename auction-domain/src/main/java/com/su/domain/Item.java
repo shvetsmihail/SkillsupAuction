@@ -5,6 +5,11 @@ public class Item {
     private String title;
     private String description;
 
+    public Item(String title, String description) {
+        this.title = title;
+        this.description = description;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -19,5 +24,10 @@ public class Item {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public String toString() {
+        return title + " " + description;
     }
 }

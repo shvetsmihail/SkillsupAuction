@@ -12,6 +12,13 @@ public class Lot {
     private User buyer;
     private BigDecimal currentPrice;
 
+    public Lot(Item item, User owner, BigDecimal startPrice) {
+        this.item = item;
+        this.owner = owner;
+        this.startPrice = startPrice;
+        this.datePlaced = new Date();
+    }
+
     public void setItem(Item item) {
         this.item = item;
     }
@@ -66,5 +73,12 @@ public class Lot {
 
     public void setCurrentPrice(BigDecimal currentPrice) {
         this.currentPrice = currentPrice;
+    }
+
+    @Override
+    public String toString() {
+        return  "item=" + item +
+                ", owner=" + owner +
+                ", startPrice=" + startPrice;
     }
 }

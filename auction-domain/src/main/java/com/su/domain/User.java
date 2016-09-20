@@ -3,12 +3,12 @@ package com.su.domain;
 public class User {
     private String login;
     private String firstName;
-    private String LastName;
+    private String lastName;
 
     public User(String login, String firstName, String lastName) {
         this.login = login;
         this.firstName = firstName;
-        LastName = lastName;
+        this.lastName = lastName;
     }
 
     public String getLogin() {
@@ -20,7 +20,7 @@ public class User {
     }
 
     public String getLastName() {
-        return LastName;
+        return lastName;
     }
 
     public void setLogin(String login) {
@@ -32,6 +32,11 @@ public class User {
     }
 
     public void setLastName(String lastName) {
-        LastName = lastName;
+        this.lastName = lastName;
+    }
+
+    @Override
+    public String toString() {
+        return firstName + " " + lastName;
     }
 }
