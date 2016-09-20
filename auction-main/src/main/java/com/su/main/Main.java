@@ -85,6 +85,7 @@ public class Main {
         }
 
         lotHistoryService.getAll().forEach(System.out::println);
+
     }
 
 }
